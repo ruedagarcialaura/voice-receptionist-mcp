@@ -1,6 +1,19 @@
 """Tests for the EHR operations behind the tools (real SQLite, frozen clock)."""
 
+from starlette.testclient import TestClient
+
 from ehr_server.errors import ErrorCode
+from ehr_server.server import create_server, http_app
+
+
+def test_dashboard_api(ehr):
+    ehr.cancel_appointment(appointment_id="APT-0003")
+    with TestClient(http_app(create_server(ehr))) as client:
+        state = client.get("/api/state").json()
+    assert [(a["appointment_id"], a["status"]) for a in state["appointments"]] == [
+        ("APT-0001", "booked"), ("APT-0003", "cancelled"), ("APT-0002", "booked")]
+    assert state["appointments"][0]["patient_name"] == "Maria Lopez"
+    assert state["audit"][0]["tool"] == "cancel_appointment"
 
 
 def err(result):

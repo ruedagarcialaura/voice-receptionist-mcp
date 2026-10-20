@@ -51,6 +51,7 @@ async def test_resources_and_prompt(ehr):
     async with Client(create_server(ehr)) as client:
         directory = json.loads((await client.read_resource("practice://directory")).contents[0].text)
         assert directory["current_time"] == "Monday 2026-10-19 09:00"
+        assert directory["calendar"][1] == "Tuesday 2026-10-20"
         assert {p["provider_id"] for p in directory["providers"]} == {"DR-JOHNSON", "DR-PATEL", "DR-MORALES", "DR-OKAFOR"}
 
         rules = (await client.read_resource("practice://rules")).contents[0].text

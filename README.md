@@ -7,13 +7,10 @@ code**, not by the LLM prompt.
 
 > All data is synthetic. This is a learning project, not a medical product.
 
-**Status:** Stage 1 done (MCP server, tests, text agent). Stage 2 (voice) and Stage 3 (scenarios,
-latency) in progress.
-
 ## Architecture
 
 ```
-            text (Stage 1) / voice (Stage 2)
+                  text or voice
                          |
                  agent/core.py  --(OpenAI-compatible API)-->  LLM (Groq or local Ollama)
                          |
@@ -43,7 +40,8 @@ py -3.11 -m venv .venv
 .\.venv\Scripts\activate
 pip install -e ".[dev]"
 
-copy .env.example .env      # then put your Groq API key in .env (or point it at Ollama)
+# create a .env file with: LLM_BASE_URL, LLM_API_KEY, LLM_MODEL (Groq), plus LIVEKIT_URL,
+# LIVEKIT_API_KEY, LIVEKIT_API_SECRET and TTS_PROVIDER for the voice agent
 
 pytest                      # rules, operations, audit log, MCP protocol, agent loop
 python -m ehr_server.seed   # (optional) rebuild the synthetic database
@@ -73,5 +71,3 @@ Dr. Johnson only works Fridays at 2 p.m. at Office A, so the server refuses and 
   encryption, access control, retention rules, BAAs with every vendor (LLM, speech) and HIPAA review.
 - Single practice, naive local times (no timezone handling), no concurrency testing beyond
   SQLite's write lock.
-
-_Full README (voice setup, scenarios, latency results) comes with Stages 2-3._

@@ -553,6 +553,8 @@ class EHR:
         return {
             "practice": p.name,
             "current_time": f"{now:%A %Y-%m-%d %H:%M}",
+            # Computed by code so the LLM never does date arithmetic ("next Tuesday" -> look it up here).
+            "calendar": [f"{d:%A} {d:%Y-%m-%d}" for d in (now.date() + timedelta(days=i) for i in range(21))],
             "timezone": p.timezone,
             "booking_policy": {
                 "slot_minutes": p.slot_minutes,
@@ -574,6 +576,16 @@ class EHR:
                 for pr in self.cfg.providers
             ],
         }
+
+    def appointments(self) -> list[dict[str, Any]]:
+        """Appointments from today on, for the dashboard."""
+        with self._db() as conn:
+            rows = conn.execute(
+                "SELECT a.*, p.first_name || ' ' || p.last_name AS patient_name FROM appointments a "
+                "JOIN patients p ON p.id = a.patient_id WHERE a.start >= ? ORDER BY a.start",
+                (self.now().date().isoformat(),),
+            ).fetchall()
+        return [self._appointment_view(r) | {"patient_name": r["patient_name"]} for r in rows]
 
     def rules_markdown(self) -> str:
         p = self.cfg.practice

@@ -149,7 +149,7 @@ caller text -> LLM (with tool schemas) -> tool calls? --yes--> MCP call_tool -> 
   so the conversion is a two-line wrapper.
 - **Safety stops**: max 8 tool rounds per turn; invalid JSON arguments are returned to the model
   as a structured error instead of crashing; provider errors produce a polite "could you repeat that".
-- **Timing per turn** (LLM vs tools) is printed. It becomes the latency report in Stage 3.
+- **Timing per turn** (LLM vs tools) is printed. It feeds the latency report.
 - **The greeting is fixed text**, not generated: zero latency, and always correct.
 - **Testable without an LLM**: `tests/test_agent_loop.py` drives the loop with a scripted fake
   LLM and checks that the structured rule error actually reaches the model.
@@ -158,7 +158,7 @@ caller text -> LLM (with tool schemas) -> tool calls? --yes--> MCP call_tool -> 
 
 ## 6. Voice pipeline
 
-_To be written in Stage 2._
+_To be written with the voice agent._
 
 ---
 

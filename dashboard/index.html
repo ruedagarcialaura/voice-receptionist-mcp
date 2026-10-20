@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Front Desk</title>
+    <style>
+      body { margin: 0; font-family: system-ui, sans-serif; background: #f6f7f9; color: #1d2433; }
+      main { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+      h1 { font-size: 22px; margin: 0 0 4px; }
+      h2 { font-size: 16px; margin: 24px 0 8px; }
+      .muted { color: #6b7280; font-size: 14px; }
+      table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; font-size: 14px; }
+      th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid #eceef2; }
+      th { background: #f0f2f5; font-weight: 600; }
+      tr.new { background: #e7f6ec; transition: background 1s; }
+      .ok { color: #15803d; font-weight: 600; }
+      .err { color: #b91c1c; font-weight: 600; }
+      .cancelled, .rescheduled { color: #9ca3af; text-decoration: line-through; }
+      code { font-size: 12px; color: #4b5563; }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/main.tsx"></script>
+  </body>
+</html>

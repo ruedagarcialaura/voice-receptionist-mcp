@@ -73,4 +73,7 @@ async def main(quiet: bool) -> None:
 if __name__ == "__main__":
     if os.name == "nt":
         os.system("")  # enable ANSI colours in the Windows console
+    # LLMs use characters such as narrow no-break spaces ("2 PM") that the Windows console's
+    # default code page cannot print.
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     asyncio.run(main(quiet="--quiet" in sys.argv))

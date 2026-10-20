@@ -52,6 +52,24 @@ def llm_from_env() -> tuple[AsyncOpenAI, str]:
     return client, os.environ["LLM_MODEL"]
 
 
+async def build_instructions(mcp: Client) -> str:
+    """System prompt = the server's `receptionist_call` prompt + the `practice://directory` resource.
+    Shared by the text and voice agents, so both follow the same script."""
+    prompt = await mcp.get_prompt("receptionist_call")
+    instructions = "\n".join(m.content.text for m in prompt.messages if m.content.type == "text")
+    directory = (await mcp.read_resource("practice://directory")).contents[0].text
+    return f"{instructions}\n\nPractice directory (JSON, includes the current date and a calendar):\n{directory}"
+
+
+def compact_json(text: str) -> str:
+    """Re-serialize JSON without indentation: the tool results stay in the conversation, so every
+    byte is re-sent on each later request (and counts against tokens-per-minute limits)."""
+    try:
+        return json.dumps(json.loads(text), separators=(",", ":"), ensure_ascii=False)
+    except json.JSONDecodeError:
+        return text
+
+
 class ReceptionistAgent:
     def __init__(self, mcp: Client, llm: AsyncOpenAI, model: str, on_event: EventHandler | None = None):
         self.mcp = mcp
@@ -60,15 +78,14 @@ class ReceptionistAgent:
         self.on_event = on_event or (lambda kind, data: None)
         self.messages: list[dict[str, Any]] = []
         self.tools: list[dict[str, Any]] = []
+        # Reasoning models (e.g. gpt-oss) think before answering; "low" is faster and uses fewer tokens.
+        effort = os.environ.get("LLM_REASONING_EFFORT")
+        self.extra: dict[str, Any] = {"reasoning_effort": effort} if effort else {}
 
     async def start(self) -> None:
         """Discover tools and build the system prompt from the server's prompt + directory resource."""
         self.tools = [mcp_tool_to_openai(t) for t in (await self.mcp.list_tools()).tools]
-        prompt = await self.mcp.get_prompt("receptionist_call")
-        instructions = "\n".join(m.content.text for m in prompt.messages if m.content.type == "text")
-        directory = (await self.mcp.read_resource("practice://directory")).contents[0].text
-        system = f"{instructions}\n\nPractice directory (JSON, includes the current date and time):\n{directory}"
-        self.messages = [{"role": "system", "content": system}]
+        self.messages = [{"role": "system", "content": await build_instructions(self.mcp)}]
 
     def add_assistant_message(self, text: str) -> None:
         self.messages.append({"role": "assistant", "content": text})
@@ -81,7 +98,7 @@ class ReceptionistAgent:
             t0 = time.perf_counter()
             try:
                 completion = await self.llm.chat.completions.create(
-                    model=self.model, messages=self.messages, tools=self.tools, temperature=0.2,
+                    model=self.model, messages=self.messages, tools=self.tools, temperature=0.2, **self.extra,
                 )
             except openai.BadRequestError as exc:
                 # Small/open models sometimes emit malformed tool calls; some providers reject them.
@@ -125,6 +142,6 @@ class ReceptionistAgent:
         stats.tool_seconds.append(time.perf_counter() - t0)
         stats.tool_calls.append(name)
 
-        text = "\n".join(c.text for c in result.content if c.type == "text")
+        text = compact_json("\n".join(c.text for c in result.content if c.type == "text"))
         self.on_event("tool_result", {"name": name, "text": text, "is_error": result.is_error})
         return text

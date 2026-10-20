@@ -7,23 +7,32 @@ the matching EHR method. The three MCP building blocks are all used:
 - Resources (application-controlled): read-only context the client app chooses to load.
 - Prompts   (user-controlled): reusable templates; here, the receptionist call script.
 
-Run:  python -m ehr_server.server        (stdio transport)
+Run:  python -m ehr_server.server          stdio (the text agent starts it this way)
+      python -m ehr_server.server --http   HTTP on port 8000: /mcp for agents, /api/state and the
+                                           built dashboard for people
 """
 
 from __future__ import annotations
 
 import json
 import logging
+import sys
 from pathlib import Path
 from typing import Annotated, Any
 
+import uvicorn
 from mcp.server.mcpserver import MCPServer
 from mcp_types import ToolAnnotations
 from pydantic import Field
+from starlette.requests import Request
+from starlette.responses import JSONResponse
+from starlette.routing import Mount
+from starlette.staticfiles import StaticFiles
 
 from .ehr import EHR, EscalationReason, PartOfDay
 
 PROMPT_PATH = Path(__file__).with_name("receptionist_prompt.md")
+DASHBOARD_DIR = Path(__file__).resolve().parent.parent / "dashboard" / "dist"
 
 READ_ONLY = ToolAnnotations(read_only_hint=True, destructive_hint=False)
 WRITE = ToolAnnotations(read_only_hint=False, destructive_hint=False, idempotent_hint=False)
@@ -119,7 +128,8 @@ def create_server(ehr: EHR | None = None) -> MCPServer:
     @mcp.resource("practice://directory", mime_type="application/json",
                   description="Offices, providers (with schedules), visit types and the current practice time.")
     def directory() -> str:
-        return json.dumps(ehr.directory(), indent=2)
+        # Compact JSON: this goes into every LLM request, and tokens are the scarce resource.
+        return json.dumps(ehr.directory(), separators=(",", ":"))
 
     @mcp.resource("practice://rules", mime_type="text/markdown",
                   description="Human-readable booking protocol, generated from the same config the server enforces.")
@@ -142,9 +152,29 @@ def create_server(ehr: EHR | None = None) -> MCPServer:
     def receptionist_call() -> str:
         return PROMPT_PATH.read_text(encoding="utf-8").format(practice_name=ehr.cfg.practice.name)
 
+    # ------------------------------------------------------------------ dashboard API (plain HTTP, not MCP)
+
+    @mcp.custom_route("/api/state", methods=["GET"])
+    async def state(request: Request) -> JSONResponse:
+        return JSONResponse({
+            "now": ehr.directory()["current_time"],
+            "appointments": ehr.appointments(),
+            "audit": ehr.audit.recent(25),
+        })
+
     return mcp
 
 
+def http_app(server: MCPServer):
+    app = server.streamable_http_app(host="0.0.0.0")
+    if DASHBOARD_DIR.exists():  # serve the built dashboard from the same origin (no CORS needed)
+        app.router.routes.append(Mount("/", StaticFiles(directory=DASHBOARD_DIR, html=True)))
+    return app
+
+
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.WARNING)  # logs go to stderr; stdout carries MCP messages
-    create_server().run()
+    logging.basicConfig(level=logging.WARNING)  # logs go to stderr; in stdio mode stdout carries MCP messages
+    if "--http" in sys.argv:
+        uvicorn.run(http_app(create_server()), host="0.0.0.0", port=8000)
+    else:
+        create_server().run()
