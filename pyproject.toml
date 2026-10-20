@@ -1,0 +1,27 @@
+[project]
+name = "voice-receptionist-mcp"
+version = "0.1.0"
+description = "Learning project: a voice receptionist that books appointments in a fake EHR through an MCP server"
+requires-python = ">=3.11"
+dependencies = [
+    "mcp>=2.3,<3",
+    "pyyaml>=6.0",
+    "openai>=1.40",
+    "python-dotenv>=1.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["ehr_server", "agent"]
+
+[tool.setuptools.package-data]
+ehr_server = ["*.yaml", "*.md"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,25 @@
+# Private material: the call transcript and research notes must never be published
+context/
+
+# Secrets
+.env
+
+# Local project notes for Claude (copied between machines by hand)
+CLAUDE.md
+
+# Generated data (the SQLite EHR is rebuilt from seed.py)
+data/
+*.db
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+
+# Editors / OS
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store

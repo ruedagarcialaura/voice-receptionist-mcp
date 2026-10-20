@@ -1,0 +1,86 @@
+# Per-practice protocol configuration: the "rule instances".
+#
+# The rule *types* (provider availability, office restriction, new-patient
+# policy, age limits, insurance network, notice period...) are implemented and
+# unit-tested in rules.py. This file only says which rules apply to whom.
+# When a practice changes its protocol, this file changes, not the code.
+#
+# All names and data are synthetic.
+
+practice:
+  name: Lakeside Family Clinic
+  timezone: America/Chicago        # all times are practice-local
+  slot_minutes: 30                 # appointments start on a 30-minute grid inside a window
+  min_notice_hours: 2              # no booking less than 2 hours ahead
+  max_days_ahead: 60               # no booking more than 60 days ahead
+  require_active_coverage: true    # insured patients need active coverage (self-pay is always allowed)
+  escalation_callback: "A member of our front-desk team will call you back within one business day."
+
+offices:
+  - id: OFFICE-A
+    name: Lakeside Downtown (Office A)
+    address: 100 Main St, Springfield
+  - id: OFFICE-B
+    name: Lakeside Northside (Office B)
+    address: 2500 North Ave, Springfield
+
+appointment_types:
+  - id: sick_visit
+    name: Sick visit
+    duration_minutes: 30
+  - id: annual_physical
+    name: Annual physical
+    duration_minutes: 60
+  - id: new_patient_visit
+    name: New patient visit
+    duration_minutes: 60
+  - id: skin_check
+    name: Dermatology skin check
+    duration_minutes: 30
+  - id: well_child
+    name: Well-child checkup
+    duration_minutes: 30
+
+providers:
+  - id: DR-JOHNSON
+    name: Dr. Emily Johnson
+    specialty: Dermatology
+    appointment_types: [skin_check]
+    accepts_new_patients: true
+    accepted_payers: [BlueCross, Aetna, self_pay]
+    availability:
+      - { office: OFFICE-A, days: [fri], start: "14:00", end: "14:30" }
+    note: Only Fridays at 2:00 p.m., and only at Office A.
+
+  - id: DR-PATEL
+    name: Dr. Raj Patel
+    specialty: Family Medicine
+    appointment_types: [sick_visit, annual_physical, new_patient_visit]
+    accepts_new_patients: true
+    accepted_payers: [BlueCross, Aetna, Cigna, UnitedHealth, self_pay]
+    availability:
+      - { office: OFFICE-A, days: [mon, tue, wed, thu], start: "09:00", end: "17:00" }
+      - { office: OFFICE-B, days: [fri], start: "09:00", end: "12:00" }
+    blocked_dates: ["2026-10-26", "2026-10-27"]
+    note: Out of office Oct 26-27.
+
+  - id: DR-MORALES
+    name: Dr. Ana Morales
+    specialty: Family Medicine
+    appointment_types: [sick_visit, annual_physical]
+    accepts_new_patients: false
+    accepted_payers: [BlueCross, Cigna, self_pay]
+    availability:
+      - { office: OFFICE-B, days: [mon, wed, fri], start: "08:00", end: "13:00" }
+    note: Not accepting new patients.
+
+  - id: DR-OKAFOR
+    name: Dr. Chidi Okafor
+    specialty: Pediatrics
+    appointment_types: [well_child, sick_visit]
+    accepts_new_patients: true
+    accepted_payers: [BlueCross, Aetna, Cigna, self_pay]
+    patient_age: { max: 17 }
+    availability:
+      - { office: OFFICE-B, days: [tue, thu], start: "10:00", end: "16:00" }
+    note: Pediatrics only (patients 17 and under).
