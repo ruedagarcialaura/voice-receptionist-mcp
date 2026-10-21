@@ -9,6 +9,7 @@ dependencies = [
     "openai>=1.40",
     "python-dotenv>=1.0",
     "uvicorn>=0.30",
+    "tzdata",  # time zone database (Windows and slim containers do not ship one)
     "livekit-agents[mcp,groq,elevenlabs,silero]>=1.8,<2",
 ]
 

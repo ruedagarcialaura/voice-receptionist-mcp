@@ -17,6 +17,7 @@ from contextlib import contextmanager
 from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Any, Literal
+from zoneinfo import ZoneInfo
 
 from dotenv import load_dotenv
 
@@ -117,7 +118,9 @@ class EHR:
     def __init__(self, db_path: str | Path, cfg: PracticeConfig, now_fn: Callable[[], datetime] | None = None):
         self.db_path = Path(db_path)
         self.cfg = cfg
-        self._now_fn = now_fn or (lambda: datetime.now().replace(second=0, microsecond=0))
+        # The practice's clock, not the server's: a container runs in UTC, the clinic does not.
+        tz = ZoneInfo(cfg.practice.timezone)
+        self._now_fn = now_fn or (lambda: datetime.now(tz).replace(tzinfo=None, second=0, microsecond=0))
         self.audit = AuditLog(self._db)
 
     @classmethod

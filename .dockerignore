@@ -1,0 +1,9 @@
+# Keep secrets, private notes and local build output out of the image
+.env
+context/
+.git/
+.venv/
+data/
+dashboard/node_modules/
+dashboard/dist/
+**/__pycache__/

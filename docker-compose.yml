@@ -1,0 +1,20 @@
+# docker compose up --build   ->  dashboard on http://localhost:8000, voice agent connected to LiveKit Cloud
+services:
+  ehr:
+    build: .
+    image: voice-receptionist-mcp
+    ports: ["8000:8000"]
+    env_file: .env
+    volumes: ["ehr-data:/app/data"]
+
+  voice:
+    build: .
+    image: voice-receptionist-mcp
+    command: python -m agent.voice_agent start --log-level warn
+    env_file: .env
+    environment:
+      EHR_MCP_URL: http://ehr:8000/mcp
+    depends_on: [ehr]
+
+volumes:
+  ehr-data:
