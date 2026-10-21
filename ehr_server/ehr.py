@@ -21,21 +21,25 @@ from zoneinfo import ZoneInfo
 
 from dotenv import load_dotenv
 
-from .audit import AuditLog
-from .config import WEEKDAYS, AppointmentType, PracticeConfig, Provider, load_config
-from .db import connect, init_schema
-from .errors import ErrorCode, error, ok
+from .db import AuditLog, connect, init_schema, seed
 from .rules import (
     PROVIDER_FIT_CODES,
     SELF_PAY,
+    WEEKDAYS,
+    AppointmentType,
     BusyBlock,
+    ErrorCode,
     Patient,
+    PracticeConfig,
+    Provider,
     Violation,
     candidate_starts,
     check_booking,
     check_provider_fit,
+    error,
+    load_config,
+    ok,
 )
-from .seed import seed
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 log = logging.getLogger("ehr")

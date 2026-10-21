@@ -3,9 +3,8 @@ from pathlib import Path
 
 import pytest
 
-from ehr_server.config import load_config
 from ehr_server.ehr import EHR
-from ehr_server.rules import Patient
+from ehr_server.rules import Patient, load_config
 
 RULES_PATH = Path(__file__).resolve().parent.parent / "ehr_server" / "practice_rules.yaml"
 

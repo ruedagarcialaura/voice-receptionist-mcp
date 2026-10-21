@@ -21,7 +21,7 @@ from .core import build_instructions
 
 load_dotenv()
 MCP_URL = os.getenv("EHR_MCP_URL", "http://localhost:8000/mcp")
-GREETING = "Thank you for calling Lakeside Family Clinic. How can I help you today?"
+GREETING = "Thank you for calling Lakeview Family Clinic. How can I help you today?"
 
 # Laptop-friendly: keep one warm process (not several) and accept calls until the CPU is really full.
 server = AgentServer(num_idle_processes=1, load_threshold=1.0)

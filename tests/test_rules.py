@@ -6,8 +6,7 @@ import pytest
 import yaml
 from pydantic import ValidationError
 
-from ehr_server.config import PracticeConfig
-from ehr_server.errors import ErrorCode
+from ehr_server.rules import ErrorCode, PracticeConfig
 from ehr_server.rules import BusyBlock, age_on, candidate_starts, check_booking
 
 from .conftest import NOW, RULES_PATH, make_patient

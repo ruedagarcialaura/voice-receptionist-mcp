@@ -8,7 +8,7 @@
 # All names and data are synthetic.
 
 practice:
-  name: Lakeside Family Clinic
+  name: Lakeview Family Clinic
   timezone: America/Chicago        # all times are practice-local
   slot_minutes: 30                 # appointments start on a 30-minute grid inside a window
   min_notice_hours: 2              # no booking less than 2 hours ahead
@@ -18,10 +18,10 @@ practice:
 
 offices:
   - id: OFFICE-A
-    name: Lakeside Downtown (Office A)
+    name: Lakeview Downtown (Office A)
     address: 100 Main St, Springfield
   - id: OFFICE-B
-    name: Lakeside Northside (Office B)
+    name: Lakeview Northside (Office B)
     address: 2500 North Ave, Springfield
 
 appointment_types:

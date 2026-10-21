@@ -21,7 +21,7 @@ from mcp.client.stdio import StdioServerParameters
 from .core import ReceptionistAgent, llm_from_env
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-GREETING = "Thank you for calling Lakeside Family Clinic. This is the virtual assistant. How can I help you today?"
+GREETING = "Thank you for calling Lakeview Family Clinic. This is the virtual assistant. How can I help you today?"
 
 DIM, CYAN, RED, RESET = "\033[2m", "\033[36m", "\033[31m", "\033[0m"
 

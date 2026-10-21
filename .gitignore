@@ -4,7 +4,10 @@ context/
 # Secrets
 .env
 
-# Generated data (the SQLite EHR is rebuilt from seed.py)
+# Personal study notes
+LEARNING_NOTES.md
+
+# Generated data (the SQLite EHR is rebuilt by ehr_server/db.py)
 data/
 *.db
 

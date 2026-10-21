@@ -158,6 +158,7 @@ def create_server(ehr: EHR | None = None) -> MCPServer:
     async def state(request: Request) -> JSONResponse:
         return JSONResponse({
             "now": ehr.directory()["current_time"],
+            "stats": ehr.audit.stats(),
             "appointments": ehr.appointments(),
             "audit": ehr.audit.recent(25),
         })
