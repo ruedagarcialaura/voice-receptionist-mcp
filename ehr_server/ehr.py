@@ -522,18 +522,22 @@ class EHR:
             ).fetchone()[0]
         self_pay = patient.insurance_payer == SELF_PAY
         status = "self_pay" if self_pay else ("active" if patient.coverage_active else "inactive")
-        in_network = [p.id for p in self.cfg.providers if self_pay or patient.insurance_payer in p.accepted_payers]
+        in_network = [p for p in self.cfg.providers if self_pay or patient.insurance_payer in p.accepted_payers]
         eligibility: dict[str, Any] = {
             "patient_id": patient.id,
             "payer": patient.insurance_payer,
             "member_id_last4": member_id[-4:] if member_id else None,
             "status": status,
-            "in_network_providers": in_network,
+            # Include each provider's visit types so the LLM cannot assume "in network" means "offers this visit".
+            "in_network_providers": [
+                {"provider_id": p.id, "name": p.name, "visit_types": p.appointment_types} for p in in_network
+            ],
+            "policy": "The clinic does not book out-of-network visits; there is no self-pay option for insured patients.",
         }
         if provider_id:
             provider = self._require_provider(provider_id)
             eligibility["provider_id"] = provider.id
-            eligibility["provider_in_network"] = provider.id in in_network
+            eligibility["provider_in_network"] = provider in in_network
         if status == "inactive":
             eligibility["next_step"] = "Coverage is inactive: do not book. Offer escalate_to_human so staff can update insurance."
         return ok(eligibility=eligibility)

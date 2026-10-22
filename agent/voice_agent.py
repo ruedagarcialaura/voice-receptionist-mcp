@@ -43,7 +43,7 @@ async def entrypoint(ctx: JobContext) -> None:
     session = AgentSession(
         vad=ctx.proc.userdata["vad"],
         stt=groq.STT(api_key=key),
-        llm=groq.LLM(model=os.environ["LLM_MODEL"], api_key=key,
+        llm=groq.LLM(model=os.environ["LLM_MODEL"], api_key=key, temperature=0.2,  # predictable, like the text agent
                      reasoning_effort=os.getenv("LLM_REASONING_EFFORT") or NOT_GIVEN),
         tts=elevenlabs.TTS() if os.getenv("TTS_PROVIDER") == "elevenlabs" else groq.TTS(api_key=key),
         mcp_servers=[MCPServerHTTP(MCP_URL)],

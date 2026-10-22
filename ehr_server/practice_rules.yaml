@@ -18,10 +18,10 @@ practice:
 
 offices:
   - id: OFFICE-A
-    name: Lakeview Downtown (Office A)
+    name: Lakeview Downtown 
     address: 100 Main St, Springfield
   - id: OFFICE-B
-    name: Lakeview Northside (Office B)
+    name: Lakeview Northside 
     address: 2500 North Ave, Springfield
 
 appointment_types:
@@ -77,7 +77,7 @@ providers:
   - id: DR-OKAFOR
     name: Dr. Chidi Okafor
     specialty: Pediatrics
-    appointment_types: [well_child, sick_visit]
+    appointment_types: [well_child, sick_visit, skin_check]
     accepts_new_patients: true
     accepted_payers: [BlueCross, Aetna, Cigna, self_pay]
     patient_age: { max: 17 }

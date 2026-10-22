@@ -188,7 +188,10 @@ def test_verify_insurance(ehr):
     inactive = ehr.verify_insurance(patient_id="P-1004")["eligibility"]
     assert inactive["status"] == "inactive" and "next_step" in inactive
     aisha = ehr.verify_insurance(patient_id="P-1005", provider_id="DR-JOHNSON")["eligibility"]
-    assert aisha["provider_in_network"] is False and "DR-JOHNSON" not in aisha["in_network_providers"]
+    assert aisha["provider_in_network"] is False
+    assert "DR-JOHNSON" not in [p["provider_id"] for p in aisha["in_network_providers"]]
+    assert {"provider_id": "DR-PATEL", "name": "Dr. Raj Patel",
+            "visit_types": ["sick_visit", "annual_physical", "new_patient_visit"]} in aisha["in_network_providers"]
     assert aisha["member_id_last4"] == "1144"
     assert ehr.verify_insurance(patient_id="P-1006")["eligibility"]["status"] == "self_pay"
 

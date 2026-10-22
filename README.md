@@ -43,7 +43,7 @@ cd dashboard; npm install; npm run build; cd ..
 |---|---|
 | `LLM_BASE_URL` | `https://api.groq.com/openai/v1` |
 | `LLM_API_KEY` | your Groq key |
-| `LLM_MODEL` | `openai/gpt-oss-120b` |
+| `LLM_MODEL` | `qwen/qwen3.8-27b` |
 | `LIVEKIT_URL`, `LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET` | from LiveKit Cloud, Settings → API keys |
 | `TTS_PROVIDER` | `groq` (Orpheus voice) or `elevenlabs` (then also `ELEVEN_API_KEY`) |
 
