@@ -107,4 +107,6 @@ GitHub Actions runs the tests on every push.
 A 4-minute walkthrough: the architecture, then a live call where the rules refuse a booking and the agent
 offers a valid alternative.
 
-[![Demo video](https://img.youtube.com/vi/yKElzj_hsO0/hqdefault.jpg)](https://youtu.be/yKElzj_hsO0)
+**[▶ Watch the demo on YouTube (4 min)](https://youtu.be/yKElzj_hsO0)**
+
+<a href="https://youtu.be/yKElzj_hsO0"><img src="https://img.youtube.com/vi/yKElzj_hsO0/maxresdefault.jpg" alt="Demo video" width="720"></a>
