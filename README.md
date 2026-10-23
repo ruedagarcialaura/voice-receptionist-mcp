@@ -24,6 +24,15 @@ can continue.
 **Resources:** `practice://directory`, `practice://rules`, `audit://recent`, `audit://appointments/{id}`.
 **Prompt:** `receptionist_call`.
 
+## Demo video
+
+A 4-minute walkthrough: the architecture, then a live call where the rules refuse a booking and the agent
+offers a valid alternative.
+
+**[▶ Watch the demo on YouTube (4 min)](https://youtu.be/yKElzj_hsO0)**
+
+<a href="https://youtu.be/yKElzj_hsO0"><img src="https://img.youtube.com/vi/yKElzj_hsO0/maxresdefault.jpg" alt="Demo video" width="720"></a>
+
 ## Run it
 
 You need Python 3.11, Node 22, a [Groq](https://console.groq.com) API key and a free
@@ -54,8 +63,9 @@ python -m agent.voice_agent dev --log-level warn     # voice agent, connected to
 ```
 
 **4. Talk to it:** open the **Console** in LiveKit Cloud and press **Start a session**. Use headphones.
-Try: *"Hi, I'm James Carter, born November 2nd 1972. I'd like to see Dr. Johnson next Tuesday."*
-Dr. Johnson only works Fridays, so the server refuses and the agent offers the next Friday at 2 p.m.
+Try: *"Hi, I'm James Carter, born November 2nd 1972. Can I move my Friday appointment with Dr. Johnson to
+next Tuesday?"* Dr. Johnson only works Fridays at 2 p.m., so the server refuses the move and the agent offers
+other Fridays instead.
 
 **Other ways to run it**
 
@@ -101,12 +111,3 @@ GitHub Actions runs the tests on every push.
 - **Hardware:** on an 8 GB laptop the voice agent runs better outside Docker; in production it would run on a
   server with dedicated CPU.
 - One practice, one time zone, SQLite. Production would use PostgreSQL and per-customer configs.
-
-## Demo video
-
-A 4-minute walkthrough: the architecture, then a live call where the rules refuse a booking and the agent
-offers a valid alternative.
-
-**[▶ Watch the demo on YouTube (4 min)](https://youtu.be/yKElzj_hsO0)**
-
-<a href="https://youtu.be/yKElzj_hsO0"><img src="https://img.youtube.com/vi/yKElzj_hsO0/maxresdefault.jpg" alt="Demo video" width="720"></a>
